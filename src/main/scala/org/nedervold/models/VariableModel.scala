@@ -5,6 +5,10 @@ package org.nedervold.models
  * @author nedervold
  */
 trait VariableModel[T] extends Model[T] {
+    /**
+     * Sets the value of the [[Model]].
+     * @param newValue the new value
+     */
     def value_=(newValue: T);
 }
 

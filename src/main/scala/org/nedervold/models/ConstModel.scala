@@ -5,4 +5,4 @@ package org.nedervold.models
  *
  * @author nedervold
  */
-class ConstModel[T](val value: T) extends Model[T]
+class ConstModel[T](override val value: T) extends Model[T]

@@ -4,7 +4,7 @@ package org.nedervold.models
  * A concrete [[VariableModel]].
  *
  * @param initValue the initial value
- * @param equals test for equality
+ * @param elmtEquals a predicate to define whether the value has changed
  */
 class VarModel[T](initValue: T,
                   elmtEquals: (T, T) => Boolean = ((lhs: T, rhs: T) => lhs == rhs))

@@ -9,6 +9,9 @@ import scala.language.existentials
  * @author nedervold
  */
 trait Model[T] extends Publisher {
+    /**
+     * the value of the [[Model]]
+     */
     def value: T
 
     // There is no reason for Models to listen to their own changes.
@@ -18,5 +21,7 @@ trait Model[T] extends Publisher {
 /**
  * Signals that a [[Model]]'s value has changed.
  * @author nedervold
+ * @constructor
+ * @param source the [[Model]] whose value changed
  */
 case class ModelChangedEvent(val source: Model[_]) extends Event {}
