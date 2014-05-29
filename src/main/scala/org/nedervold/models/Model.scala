@@ -6,6 +6,7 @@ import scala.language.existentials
 
 /**
  * Holds a value that may change over time.
+ * @author nedervold
  */
 trait Model[T] extends Publisher {
     def value: T
@@ -15,13 +16,7 @@ trait Model[T] extends Publisher {
 }
 
 /**
- * Holds a value that may be set.
- */
-trait VariableModel[T] extends Model[T] {
-    def value_=(newValue: T);
-}
-
-/**
- * Signals that a model's value has changed.
+ * Signals that a [[Model]]'s value has changed.
+ * @author nedervold
  */
 case class ModelChangedEvent(val source: Model[_]) extends Event {}
