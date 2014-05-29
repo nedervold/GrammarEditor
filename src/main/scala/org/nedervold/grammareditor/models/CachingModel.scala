@@ -1,4 +1,4 @@
-package org.nedervold.models
+package org.nedervold.grammareditor.models
 
 /**
  * Caches the latest value and publishes when the value changes.

@@ -1,4 +1,4 @@
-package org.nedervold.models
+package org.nedervold.grammareditor.models
 
 /**
  * A constant [[Model]].

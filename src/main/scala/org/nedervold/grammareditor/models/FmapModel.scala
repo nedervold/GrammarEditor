@@ -1,4 +1,4 @@
-package org.nedervold.models
+package org.nedervold.grammareditor.models
 
 /**
  * Models the result of running a unary function on the base [[Model]]'s value.

@@ -1,7 +1,8 @@
-package org.nedervold.models
+package org.nedervold.grammareditor.models
+
+import scala.swing.Reactor
 
 import org.scalatest.FlatSpec
-import scala.swing.Reactor
 
 class VarModelSpec extends FlatSpec {
     behavior of "A VarModel"

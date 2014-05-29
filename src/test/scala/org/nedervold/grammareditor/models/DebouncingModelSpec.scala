@@ -1,8 +1,10 @@
-package org.nedervold.models
+package org.nedervold.grammareditor.models
+
+import java.util.concurrent.TimeUnit
+
+import scala.swing.Reactor
 
 import org.scalatest.FlatSpec
-import scala.swing.Reactor
-import java.util.concurrent.TimeUnit
 
 class DebouncingModelSpec extends FlatSpec {
     behavior of "A DebouncingModel"
