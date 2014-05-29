@@ -1,6 +1,10 @@
 *.class
 *.log
 
+# Emacs specific
+*~
+\#*
+
 # Mac OS specific
 .DS_Store
 
