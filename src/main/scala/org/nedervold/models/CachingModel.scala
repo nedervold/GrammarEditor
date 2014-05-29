@@ -18,7 +18,7 @@ abstract class CachingModel[T](initValue: T,
     protected def value_=(newValue: T) {
         if (!elmtEquals(newValue, cachedValue)) {
             cachedValue = newValue;
-            publish(new ModelChangedEvent(this));
+            publish(event);
         }
     }
 }

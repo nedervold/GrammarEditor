@@ -14,6 +14,11 @@ trait Model[T] extends Publisher {
      */
     def value: T
 
+    /**
+     * A [[ModelChangedEvent]] for this model
+     */
+    lazy val event = new ModelChangedEvent(this)
+
     // There is no reason for Models to listen to their own changes.
     deafTo(this)
 }
