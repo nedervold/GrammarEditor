@@ -38,7 +38,7 @@ class DebouncingModelSpec extends FlatSpec {
          * Hopefully this is long enough for the debounce timer to kick in.
          * We sleep twice as long.
          */
-        Thread.sleep(10)
+        Thread.sleep(20)
         assert(debouncingModel.value == newValue)
     }
 
@@ -54,7 +54,7 @@ class DebouncingModelSpec extends FlatSpec {
 
         assert(!heard)
         varModel.value = -3
-        Thread.sleep(10)
+        Thread.sleep(20)
         assert(heard)
     }
 
@@ -70,7 +70,7 @@ class DebouncingModelSpec extends FlatSpec {
 
         assert(!heard)
         varModel.value = 5
-        Thread.sleep(10)
+        Thread.sleep(20)
         assert(!heard)
     }
 
@@ -86,20 +86,20 @@ class DebouncingModelSpec extends FlatSpec {
 
         assert(!heard)
         varModel.value = 5
-        Thread.sleep(10)
+        Thread.sleep(20)
         assert(!heard)
         varModel.value = 7
-        Thread.sleep(10)
+        Thread.sleep(20)
         assert(!heard)
         varModel.value = 8
-        Thread.sleep(10)
+        Thread.sleep(20)
         assert(heard)
         heard = false
         varModel.value = 0
-        Thread.sleep(10)
+        Thread.sleep(20)
         assert(!heard)
         varModel.value = 1
-        Thread.sleep(10)
+        Thread.sleep(20)
         assert(heard)
         heard = false
     }
@@ -117,7 +117,7 @@ class DebouncingModelSpec extends FlatSpec {
             // We hope that the calls are not spaced more than 5μs apart
             varModel.value = !varModel.value;
         }
-        Thread.sleep(10)
+        Thread.sleep(20)
         assert(eventsHeard == 1)
     }
 }
