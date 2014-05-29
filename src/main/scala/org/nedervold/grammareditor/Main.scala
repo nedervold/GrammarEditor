@@ -4,7 +4,7 @@ package org.nedervold.grammareditor
 
 object Main extends SimpleSwingApplication {
     def top = new MainFrame {
-        title = "Main"
+        title = "Grammar Editor"
         size = new Dimension(800, 600)
     }
 }
