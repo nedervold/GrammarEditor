@@ -24,6 +24,16 @@ class DebouncingModelSpec extends FlatSpec {
 	 * 2014-05-29 Disabled the tests because the threading isn't well-behaved on Travis CI.
 	 */
 
+    it should "require non-null base model and function" in {
+        val varModel = new VarModel(5)
+        intercept[NullPointerException] {
+            new DebouncingModel(varModel, 5, null)
+        }
+        intercept[NullPointerException] {
+            new DebouncingModel(null, 5, TimeUnit.SECONDS)
+        }
+    }
+
     it should "return the value of its base model" in {
         val value = 5
         val varModel = new VarModel(value)

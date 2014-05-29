@@ -39,6 +39,7 @@ trait TermPrinting {
  * @param name the name of the nonterminal
  */
 case class Nonterminal(val name: String) extends Term with TermPrinting with Ordered[Nonterminal] {
+    require(name != null)
     def foreach[U](f: Term => U): Unit = { f(this) }
     def toStringPrec(prec: Int) = name
     def compare(that: Nonterminal) = this.name.compare(that.name)
@@ -51,6 +52,7 @@ case class Nonterminal(val name: String) extends Term with TermPrinting with Ord
  * @param name the name of the terminal
  */
 case class Terminal(val name: String) extends Term with TermPrinting with Ordered[Terminal] {
+    require(name != null)
     def foreach[U](f: Term => U): Unit = { f(this) }
     def toStringPrec(prec: Int) = name
     def compare(that: Terminal) = this.name.compare(that.name)

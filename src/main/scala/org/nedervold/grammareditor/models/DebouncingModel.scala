@@ -20,7 +20,7 @@ class DebouncingModel[T](val baseModel: Model[T],
                          val unit: TimeUnit,
                          override val elmtEquals: (T, T) => Boolean = ((lhs: T, rhs: T) => lhs == rhs))
     extends CachingModel[T](baseModel.value, elmtEquals) {
-
+    require(unit != null)
     private val delayMillis = unit.toMillis(time);
 
     // TODO This isn't very Scalesque, but it'll do.

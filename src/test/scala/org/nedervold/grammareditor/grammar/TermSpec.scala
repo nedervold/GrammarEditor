@@ -5,6 +5,12 @@ import org.scalatest.FlatSpec
 class TermSpec extends FlatSpec {
     behavior of "A Terminal"
 
+    it should "require a name" in {
+        intercept[IllegalArgumentException] {
+            new Terminal(null)
+        }
+    }
+
     it should "print as its name" in {
         val name = "BOB"
         assert(new Terminal(name).toString == name)
@@ -20,6 +26,12 @@ class TermSpec extends FlatSpec {
     }
 
     behavior of "A Nonterminal"
+
+    it should "require a name" in {
+        intercept[IllegalArgumentException] {
+            new Nonterminal(null)
+        }
+    }
 
     it should "print as its name" in {
         val name = "bob"
