@@ -104,3 +104,72 @@ case class Or(val lhs: Term, val rhs: Term) extends Term {
     def foreach[U](f: Term => U): Unit = { f(this); lhs.foreach(f); rhs.foreach(f) }
 }
 
+/**
+ * An optional term
+ * @author nedervold
+ * @constructor
+ * @param body the optional term
+ */
+case class Optional(val body: Term) extends Term {
+    require(body != null)
+
+    def toStringPrec(prec: Int) = "[" + body.toString ++ "]"
+    def foreach[U](f: Term => U): Unit = { f(this); body.foreach(f) }
+}
+
+/**
+ * A repeated term, possibly no times
+ * @author nedervold
+ * @constructor
+ * @param body the repeated term
+ */
+case class Repetition0(val body: Term) extends Term {
+    require(body != null)
+
+    def toStringPrec(prec: Int) = "{" + body.toString ++ "}"
+    def foreach[U](f: Term => U): Unit = { f(this); body.foreach(f) }
+}
+
+/**
+ * A repeated term, appearing at least once
+ * @author nedervold
+ * @constructor
+ * @param body the repeated term
+ */
+case class Repetition1(val body: Term) extends Term {
+    require(body != null)
+
+    def toStringPrec(prec: Int) = "{" + body.toString ++ "}+"
+    def foreach[U](f: Term => U): Unit = { f(this); body.foreach(f) }
+}
+
+/**
+ * A repeated term with a separator, possibly repeated no times
+ * @author nedervold
+ * @constructor
+ * @param body the repeated term
+ * @param sep the separator
+ */
+case class RepetitionSep0(val body: Term, val sep: Term) extends Term {
+    require(body != null)
+    require(sep != null)
+
+    def toStringPrec(prec: Int) = "{" + body.toStringPrec(2) + " ... " + sep.toStringPrec(2) + "}"
+    def foreach[U](f: Term => U): Unit = { f(this); body.foreach(f); sep.foreach(f) }
+}
+
+/**
+ * A repeated term with a separator, appearing at least once
+ * @author nedervold
+ * @constructor
+ * @param body the repeated term
+ * @param sep the separator
+ */
+case class RepetitionSep1(val body: Term, val sep: Term) extends Term {
+    require(body != null)
+    require(sep != null)
+
+    def toStringPrec(prec: Int) = "{" + body.toStringPrec(2) + " ... " + sep.toStringPrec(2) + "}+"
+    def foreach[U](f: Term => U): Unit = { f(this); body.foreach(f); sep.foreach(f) }
+}
+

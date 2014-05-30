@@ -4,6 +4,13 @@ import org.nedervold.grammareditor.grammar.Grammar
 import org.nedervold.grammareditor.grammar.Production
 import org.nedervold.grammareditor.grammar.Nonterminal
 
+/**
+ * Returns a grammar with the productions sorted by their appearance in a depth-first
+ * search from the first production.  This search leaves the productions in an order
+ * that feels logical.
+ *
+ * @author nedervold
+ */
 object DepthFirstSortTransformation extends GrammarTransformation {
     private def depthFirstSearch[N](roots: Seq[N], succ: (N) => List[N]): List[N] = {
         def go(roots: Seq[N], seen: Set[N]): List[N] = {

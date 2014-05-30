@@ -70,4 +70,61 @@ class TermSpec extends FlatSpec {
             new Or(t, null)
         }
     }
+
+    behavior of "An Optional term"
+
+    it should "require a body" in {
+        intercept[IllegalArgumentException] {
+            new Optional(null)
+        }
+    }
+
+    behavior of "A Repetition0 term"
+
+    it should "require a body" in {
+        intercept[IllegalArgumentException] {
+            new Repetition0(null)
+        }
+    }
+
+    behavior of "A Repetition1 term"
+
+    it should "require a body" in {
+        intercept[IllegalArgumentException] {
+            new Repetition1(null)
+        }
+    }
+
+    behavior of "A RepetitionSep0 term"
+
+    it should "require a non-null body" in {
+        intercept[IllegalArgumentException] {
+            val t = new Terminal("T")
+            new RepetitionSep0(null, t)
+        }
+    }
+
+    it should "require a non-null separator" in {
+        intercept[IllegalArgumentException] {
+            val t = new Terminal("T")
+            new RepetitionSep0(null, t)
+        }
+    }
+
+    behavior of "A RepetitionSep1 term"
+
+    it should "require a non-null body" in {
+        intercept[IllegalArgumentException] {
+            val t = new Terminal("T")
+            new RepetitionSep1(null, t)
+        }
+    }
+
+    it should "require a non-null separator" in {
+        intercept[IllegalArgumentException] {
+            val t = new Terminal("T")
+            new RepetitionSep1(null, t)
+        }
+    }
+
 }
