@@ -10,6 +10,8 @@ version := "0.1"
 
 scalaVersion := "2.10.4"
 
+scalacOptions += "-deprecation"
+
 libraryDependencies += "org.scala-lang" % "scala-swing" % "2.10.4"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.1.5" % "test"
