@@ -7,12 +7,12 @@ import org.nedervold.grammareditor.grammar.Nonterminal
 import org.nedervold.grammareditor.grammar.Term
 import scala.collection.immutable.TreeSet
 
-class AddUndefinedProductionsTransformationSpec extends FlatSpec {
-    behavior of "an AddUndefinedProductionsTransformation"
+class AddUndefinedProductionsSpec extends FlatSpec {
+    behavior of "an AddUndefinedProductions"
 
     it should "require a non-null grammar" in {
         intercept[NullPointerException] {
-            AddUndefinedProductionsTransformation(null)
+            AddUndefinedProductions(null)
         }
     }
 
@@ -23,7 +23,7 @@ class AddUndefinedProductionsTransformationSpec extends FlatSpec {
 
     it should "contain productions for all nonterminals" in {
         val gram = Grammar(List(new Production(Nonterminal("a"), Nonterminal("b"))))
-        val newGram = AddUndefinedProductionsTransformation(gram)
+        val newGram = AddUndefinedProductions(gram)
         def productionHeads(gram: Grammar): TreeSet[Nonterminal] = {
             new TreeSet[Nonterminal]() ++ gram.productions.map(_.lhs)
         }
@@ -32,7 +32,7 @@ class AddUndefinedProductionsTransformationSpec extends FlatSpec {
 
     it should "not change undefined nonterminals" in {
         val gram = Grammar(List(new Production(Nonterminal("a"), Nonterminal("b"))))
-        val newGram = AddUndefinedProductionsTransformation(gram)
+        val newGram = AddUndefinedProductions(gram)
         assert(gram.undefinedNonterminals === newGram.undefinedNonterminals)
     }
 }

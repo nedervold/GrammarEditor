@@ -8,8 +8,8 @@ import org.nedervold.grammareditor.grammar.Grammar
  *
  * @author nedervold
  */
-object FormatTransformation extends GrammarTransformation {
-    def apply(gram: Grammar): Grammar = AddUndefinedProductionsTransformation(gram)
+object Format extends GrammarTransformation {
+    def apply(gram: Grammar): Grammar = AddUndefinedProductions(gram)
 
     val displayName = "Format"
     override val accelerator = mkAccelerator('F')

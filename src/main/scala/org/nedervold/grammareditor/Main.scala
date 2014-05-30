@@ -2,12 +2,17 @@ package org.nedervold.grammareditor
 
 import java.awt.Color
 import java.util.concurrent.TimeUnit
+
+import scala.swing.Action
 import scala.swing.BorderPanel
 import scala.swing.BorderPanel.Position.Center
 import scala.swing.BorderPanel.Position.South
 import scala.swing.BoxPanel
 import scala.swing.Dimension
 import scala.swing.MainFrame
+import scala.swing.Menu
+import scala.swing.MenuBar
+import scala.swing.MenuItem
 import scala.swing.Orientation
 import scala.swing.ScrollPane
 import scala.swing.SimpleSwingApplication
@@ -16,22 +21,19 @@ import scala.swing.Swing
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
+
 import org.nedervold.grammareditor.grammar.Grammar
 import org.nedervold.grammareditor.grammar.GrammarParser
+import org.nedervold.grammareditor.grammar.transformations.AlphabeticSort
+import org.nedervold.grammareditor.grammar.transformations.DepthFirstSort
+import org.nedervold.grammareditor.grammar.transformations.Format
 import org.nedervold.grammareditor.models.DebouncingModel
 import org.nedervold.grammareditor.models.FmapModel
 import org.nedervold.grammareditor.models.Model
+import org.nedervold.grammareditor.models.ModelChangedEvent
 import org.nedervold.grammareditor.models.adapters.DocumentAdapter
 import org.nedervold.grammareditor.models.viewcontrollers.DocumentViewController
 import org.nedervold.grammareditor.models.views.TextAreaView
-import scala.swing.MenuBar
-import scala.swing.Menu
-import org.nedervold.grammareditor.grammar.transformations.FormatTransformation
-import scala.swing.Action
-import org.nedervold.grammareditor.models.ModelChangedEvent
-import scala.swing.MenuItem
-import org.nedervold.grammareditor.grammar.transformations.AlphabeticSortTransformation
-import org.nedervold.grammareditor.grammar.transformations.DepthFirstSortTransformation
 
 object Main extends SimpleSwingApplication {
     System.setProperty("apple.laf.useScreenMenuBar", "true")
@@ -103,7 +105,7 @@ object Main extends SimpleSwingApplication {
             contents += new Menu("File")
             contents += new Menu("Edit") {
                 for (
-                    xform <- List(FormatTransformation, AlphabeticSortTransformation, DepthFirstSortTransformation)
+                    xform <- List(Format, AlphabeticSort, DepthFirstSort)
                 ) {
                     val action = new Action(xform.displayName) {
                         def apply = {

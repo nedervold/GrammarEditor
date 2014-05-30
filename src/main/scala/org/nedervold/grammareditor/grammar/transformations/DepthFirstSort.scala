@@ -11,7 +11,7 @@ import org.nedervold.grammareditor.grammar.Nonterminal
  *
  * @author nedervold
  */
-object DepthFirstSortTransformation extends GrammarTransformation {
+object DepthFirstSort extends GrammarTransformation {
     private def depthFirstSearch[N](roots: Seq[N], succ: (N) => List[N]): List[N] = {
         def go(roots: Seq[N], seen: Set[N]): List[N] = {
             roots match {
@@ -28,7 +28,7 @@ object DepthFirstSortTransformation extends GrammarTransformation {
 
     def apply(gram: Grammar): Grammar = {
         require(gram != null)
-        val newGram = AddUndefinedProductionsTransformation(gram)
+        val newGram = AddUndefinedProductions(gram)
         val productions = newGram.productions
 
         def dfsProds: List[Production] = {

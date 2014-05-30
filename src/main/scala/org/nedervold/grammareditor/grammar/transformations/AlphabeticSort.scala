@@ -7,10 +7,10 @@ import org.nedervold.grammareditor.grammar.Grammar
  * assumed to be the start symbol).
  * @author nedervold
  */
-object AlphabeticSortTransformation extends GrammarTransformation {
+object AlphabeticSort extends GrammarTransformation {
     def apply(gram: Grammar): Grammar = {
         require(gram != null)
-        val hd :: tl = AddUndefinedProductionsTransformation(gram).productions
+        val hd :: tl = AddUndefinedProductions(gram).productions
         new Grammar(hd :: tl.sortBy(_.head.toString))
     }
 

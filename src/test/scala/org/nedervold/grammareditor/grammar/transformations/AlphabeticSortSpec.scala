@@ -8,12 +8,12 @@ import org.nedervold.grammareditor.grammar.Term
 import scala.collection.immutable.TreeSet
 import org.nedervold.grammareditor.grammar.Epsilon
 
-class DepthFirstSortTransformationSpec extends FlatSpec {
-    behavior of "an DepthFirstSortTransformation"
+class AlphabeticSortSpec extends FlatSpec {
+    behavior of "an AlphabeticSort"
 
     it should "require a non-null grammar" in {
         intercept[IllegalArgumentException] {
-            DepthFirstSortTransformation(null)
+            AlphabeticSort(null)
         }
     }
 
@@ -26,7 +26,7 @@ class DepthFirstSortTransformationSpec extends FlatSpec {
         val gram = Grammar(List(new Production(Nonterminal("a"), Nonterminal("b")),
             new Production(Nonterminal("c"), Nonterminal("a")),
             new Production(Nonterminal("b"), Epsilon)))
-        val newGram = DepthFirstSortTransformation(gram)
+        val newGram = AlphabeticSort(gram)
         assert(Set(gram.productions: _*) === Set(newGram.productions: _*))
     }
 
