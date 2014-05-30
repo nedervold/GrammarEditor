@@ -2,6 +2,7 @@ package org.nedervold.grammareditor.models.views
 
 import scala.swing.Swing
 import scala.swing.TextArea
+import org.nedervold.grammareditor.models.onEDT
 import org.nedervold.grammareditor.models.Model
 import org.nedervold.grammareditor.models.ModelChangedEvent
 
@@ -21,6 +22,6 @@ class TextAreaView[T](val model: Model[T],
     editable = false;
     text = unparse(model.value)
     reactions += {
-        case ModelChangedEvent(_) => Swing.onEDT { text = unparse(model.value) }
+        case ModelChangedEvent(_) => onEDT { text = unparse(model.value) }
     }
 }

@@ -1,5 +1,8 @@
 package org.nedervold.grammareditor.grammar
 
+import scala.collection.immutable.TreeSet
+import scala.collection.SortedSet
+
 /**
  * Grammars in our grammar of grammars.
  * @author nedervold
@@ -16,6 +19,12 @@ sealed case class Grammar(val productions: Seq[Production]) extends Syntax {
      * @return true if all productions are defined
      */
     def isDefined = productions.forall(_.isDefined);
+
+    def definedNonterminals = TreeSet[Nonterminal]() ++ productions.collect {
+        case Production(nt, Some(_)) => nt
+    }
+
+    def undefinedNonterminals: SortedSet[Nonterminal] = nonterminals.diff(definedNonterminals)
 
     def foreach[U](f: Term => U): Unit = {
         productions.map(_.foreach(f))

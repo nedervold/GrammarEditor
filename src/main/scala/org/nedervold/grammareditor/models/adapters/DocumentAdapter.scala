@@ -1,8 +1,7 @@
 package org.nedervold.grammareditor.models.adapters
 
-import scala.swing.Swing.onEDTWait
-
 import org.nedervold.grammareditor.models.VariableModel
+import org.nedervold.grammareditor.models.onEDTWait
 
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener

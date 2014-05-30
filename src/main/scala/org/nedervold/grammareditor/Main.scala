@@ -2,7 +2,6 @@ package org.nedervold.grammareditor
 
 import java.awt.Color
 import java.util.concurrent.TimeUnit
-
 import scala.swing.BorderPanel
 import scala.swing.BorderPanel.Position.Center
 import scala.swing.BorderPanel.Position.South
@@ -17,7 +16,6 @@ import scala.swing.Swing
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
-
 import org.nedervold.grammareditor.grammar.Grammar
 import org.nedervold.grammareditor.grammar.GrammarParser
 import org.nedervold.grammareditor.models.DebouncingModel
@@ -26,6 +24,12 @@ import org.nedervold.grammareditor.models.Model
 import org.nedervold.grammareditor.models.adapters.DocumentAdapter
 import org.nedervold.grammareditor.models.viewcontrollers.DocumentViewController
 import org.nedervold.grammareditor.models.views.TextAreaView
+import scala.swing.MenuBar
+import scala.swing.Menu
+import org.nedervold.grammareditor.grammar.transformations.FormatTransformation
+import scala.swing.Action
+import org.nedervold.grammareditor.models.ModelChangedEvent
+import scala.swing.MenuItem
 
 object Main extends SimpleSwingApplication {
     System.setProperty("apple.laf.useScreenMenuBar", "true")
@@ -33,7 +37,7 @@ object Main extends SimpleSwingApplication {
     val rawGrammarSource = new DocumentAdapter
     val grammarSource = new DebouncingModel(rawGrammarSource, 500, TimeUnit.MILLISECONDS)
     val grammar: Model[Try[Grammar]] = new FmapModel(GrammarParser.parseGrammar(_: String), grammarSource)
-
+    val grammarValidModel: Model[Boolean] = new FmapModel((_ : Try[Grammar]).isSuccess, grammar)
     /**
      * Parses the grammar and if it's successful, displays the nonterminals
      *
@@ -92,6 +96,29 @@ object Main extends SimpleSwingApplication {
 
     def top = new MainFrame {
         title = "Grammar Editor"
+
+        menuBar = new MenuBar {
+            contents += new Menu("File")
+            contents += new Menu("Edit") {
+                for (
+                    xform <- List(FormatTransformation)
+                ) {
+                    val action = new Action(xform.displayName) {
+                        def apply = {
+                            rawGrammarSource.value = xform(grammar.value.get).toString
+                        }
+                        accelerator = xform.accelerator
+                        enabled = true;
+                    }
+                    reactions += {
+                        case ModelChangedEvent(`grammarValidModel`) => action.enabled = grammarValidModel.value;
+                    }
+                    listenTo(grammarValidModel)
+                    action.enabled = grammarValidModel.value
+                    contents += new MenuItem(action)
+                }
+            }
+        }
 
         val editPanel = new ScrollPane {
             viewportView = new DocumentViewController(rawGrammarSource)
