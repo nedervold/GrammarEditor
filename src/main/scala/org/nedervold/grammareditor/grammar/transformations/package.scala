@@ -10,7 +10,7 @@ package object transformations {
      * NOTE: Implementation might not be right for non-Mac platforms
      *
      * @param ch the character the accelerator is based on
-     * @return a [[KeyStroke]] for Meta-ch
+     * @return a KeyStroke for Meta-ch
      */
     def mkAccelerator(ch: Char): Option[KeyStroke] = {
         // TODO 2014-05-29 This might not be right for non-Mac platforms

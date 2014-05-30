@@ -2,7 +2,6 @@ package org.nedervold.grammareditor
 
 import java.awt.Color
 import java.util.concurrent.TimeUnit
-
 import scala.swing.Action
 import scala.swing.BorderPanel
 import scala.swing.BorderPanel.Position.Center
@@ -21,7 +20,6 @@ import scala.swing.Swing
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
-
 import org.nedervold.grammareditor.grammar.Grammar
 import org.nedervold.grammareditor.grammar.GrammarParser
 import org.nedervold.grammareditor.grammar.transformations.AlphabeticSort
@@ -34,6 +32,11 @@ import org.nedervold.grammareditor.models.ModelChangedEvent
 import org.nedervold.grammareditor.models.adapters.DocumentAdapter
 import org.nedervold.grammareditor.models.viewcontrollers.DocumentViewController
 import org.nedervold.grammareditor.models.views.TextAreaView
+import org.nedervold.grammareditor.grammar.transformations.GrammarTransformation
+import scala.swing.FileChooser
+import javax.swing.filechooser.FileNameExtensionFilter
+import java.io.PrintWriter
+import scala.io.Source
 
 object Main extends SimpleSwingApplication {
     System.setProperty("apple.laf.useScreenMenuBar", "true")
@@ -98,11 +101,74 @@ object Main extends SimpleSwingApplication {
      */
     val errorModel: Model[String] = new FmapModel(errorDisplay, grammar)
 
+    /**
+     * Opens a user-selected file and puts the contents into the edit panel.
+     */
+    def openCmd() = {
+        val fileChooser: FileChooser = new FileChooser( /* dir */ ) {
+            title = "Open..."
+            fileFilter = new FileNameExtensionFilter("Grammar as text", "txt");
+        }
+        val res = fileChooser.showOpenDialog(null);
+        res match {
+            case FileChooser.Result.Approve => {
+                val src = Source.fromFile(fileChooser.selectedFile, "UTF-8")
+                rawGrammarSource.value = src.mkString
+            }
+            case _ => {}
+        }
+    }
+
+    /**
+     * Opens a user-selected file and puts the (pretty-printed) contents 
+     * of the edit panel into it.
+     */
+    def saveCmd() = {
+        assert(grammarValidModel.value)
+        val fileChooser: FileChooser = new FileChooser( /* dir */ ) {
+            title = "Save As..."
+            fileFilter = new FileNameExtensionFilter("Grammar as text", "txt");
+        }
+        val res = fileChooser.showSaveDialog(null);
+
+        res match {
+            case FileChooser.Result.Approve => {
+                val out = new PrintWriter(fileChooser.selectedFile, "UTF-8")
+                try {
+                    out.print(grammar.value.get.toString)
+                } finally {
+                    out.close
+                }
+            }
+            case _ => {}
+        }
+    }
+
     def top = new MainFrame {
         title = "Grammar Editor"
 
         menuBar = new MenuBar {
-            contents += new Menu("File")
+            contents += new Menu("File") {
+                import org.nedervold.grammareditor.grammar.transformations.mkAccelerator
+                val openAction = new Action("Open...") {
+                    def apply = openCmd()
+                    accelerator = mkAccelerator('O')
+                    enabled = true;
+                }
+                val saveAction = new Action("Save As...") {
+                    def apply = saveCmd()
+                    accelerator = mkAccelerator('S')
+                    enabled = true;
+                }
+                reactions += {
+                    case ModelChangedEvent(`grammarValidModel`) => saveAction.enabled = grammarValidModel.value;
+                }
+                listenTo(grammarValidModel)
+                saveAction.enabled = grammarValidModel.value
+                contents += new MenuItem(openAction);
+                contents += new MenuItem(saveAction);
+            }
+
             contents += new Menu("Edit") {
                 for (
                     xform <- List(Format, AlphabeticSort, DepthFirstSort)
