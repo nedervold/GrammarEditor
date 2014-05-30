@@ -59,8 +59,8 @@ class FmapModelSpec extends FlatSpec {
         assert(!heard)
     }
 
-    /* TODO Tests for the rest of the FmapNModels.  They're mostly boilerplate.  
-     * I need to learn how to  make boilerplate in FlatSpecs.
+    /* TODO 2014-05-29 Tests for the rest of the FmapNModels.  They're mostly boilerplate.  
+     * I need to learn how to make boilerplate in FlatSpecs.
      */
 
 }
