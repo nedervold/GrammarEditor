@@ -3,7 +3,7 @@ package org.nedervold.grammareditor.grammar
 import org.scalatest.FlatSpec
 
 class GrammarSpec extends FlatSpec {
-    behavior of "A Grammar"
+    behavior of "a Grammar"
 
     it should "require non-empty productions" in {
         intercept[IllegalArgumentException] {

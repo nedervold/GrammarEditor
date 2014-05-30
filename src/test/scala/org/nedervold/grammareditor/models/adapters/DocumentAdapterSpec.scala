@@ -9,7 +9,7 @@ import org.scalatest.FlatSpec
 import javax.swing.text._
 
 class DocumentAdapterSpec extends FlatSpec {
-    behavior of "A DocumentAdapter"
+    behavior of "a DocumentAdapter"
 
     it should "require a non-null document" in {
         intercept[IllegalArgumentException] {

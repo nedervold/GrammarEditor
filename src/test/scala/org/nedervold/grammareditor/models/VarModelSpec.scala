@@ -5,7 +5,7 @@ import scala.swing.Reactor
 import org.scalatest.FlatSpec
 
 class VarModelSpec extends FlatSpec {
-    behavior of "A VarModel"
+    behavior of "a VarModel"
 
     it should "require a non-null elmtEqual predicate" in {
         intercept[IllegalArgumentException] {

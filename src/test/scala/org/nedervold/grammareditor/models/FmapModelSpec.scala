@@ -7,7 +7,7 @@ import org.scalatest.FlatSpec
 class FmapModelSpec extends FlatSpec {
     def square(n: Int) = n * n
 
-    behavior of "An FmapModel"
+    behavior of "an FmapModel"
 
     it should "require non-null base model and function" in {
         intercept[NullPointerException] {

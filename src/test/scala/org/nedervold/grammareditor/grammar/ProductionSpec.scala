@@ -3,7 +3,7 @@ package org.nedervold.grammareditor.grammar
 import org.scalatest.FlatSpec
 
 class ProductionSpec extends FlatSpec {
-    behavior of "A Production"
+    behavior of "a Production"
 
     it should "require a left-hand side" in {
         intercept[IllegalArgumentException] {

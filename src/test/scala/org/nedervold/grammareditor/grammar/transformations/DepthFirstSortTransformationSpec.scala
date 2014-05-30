@@ -9,7 +9,7 @@ import scala.collection.immutable.TreeSet
 import org.nedervold.grammareditor.grammar.Epsilon
 
 class DepthFirstSortTransformationSpec extends FlatSpec {
-    behavior of "An DepthFirstSortTransformation"
+    behavior of "an DepthFirstSortTransformation"
 
     it should "require a non-null grammar" in {
         intercept[IllegalArgumentException] {

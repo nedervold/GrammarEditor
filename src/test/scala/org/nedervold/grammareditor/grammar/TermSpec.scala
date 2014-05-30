@@ -3,7 +3,7 @@ package org.nedervold.grammareditor.grammar
 import org.scalatest.FlatSpec
 
 class TermSpec extends FlatSpec {
-    behavior of "A Terminal"
+    behavior of "a Terminal"
 
     it should "require a name" in {
         intercept[IllegalArgumentException] {
@@ -25,7 +25,7 @@ class TermSpec extends FlatSpec {
         assert(terminal.terminals === Set(terminal))
     }
 
-    behavior of "A Nonterminal"
+    behavior of "a Nonterminal"
 
     it should "require a name" in {
         intercept[IllegalArgumentException] {
@@ -47,7 +47,7 @@ class TermSpec extends FlatSpec {
         assert(nonterminal.nonterminals === Set(nonterminal))
     }
 
-    behavior of "A Sequenced term"
+    behavior of "a Sequenced term"
 
     it should "require an lhs and rhs" in {
         val t = new Terminal("T")
@@ -59,7 +59,7 @@ class TermSpec extends FlatSpec {
         }
     }
 
-    behavior of "An Or term"
+    behavior of "an Or term"
 
     it should "require an lhs and rhs" in {
         val t = new Terminal("T")
@@ -71,7 +71,7 @@ class TermSpec extends FlatSpec {
         }
     }
 
-    behavior of "An Optional term"
+    behavior of "an Optional term"
 
     it should "require a body" in {
         intercept[IllegalArgumentException] {
@@ -79,7 +79,7 @@ class TermSpec extends FlatSpec {
         }
     }
 
-    behavior of "A Repetition0 term"
+    behavior of "a Repetition0 term"
 
     it should "require a body" in {
         intercept[IllegalArgumentException] {
@@ -87,7 +87,7 @@ class TermSpec extends FlatSpec {
         }
     }
 
-    behavior of "A Repetition1 term"
+    behavior of "a Repetition1 term"
 
     it should "require a body" in {
         intercept[IllegalArgumentException] {
@@ -95,7 +95,7 @@ class TermSpec extends FlatSpec {
         }
     }
 
-    behavior of "A RepetitionSep0 term"
+    behavior of "a RepetitionSep0 term"
 
     it should "require a non-null body" in {
         intercept[IllegalArgumentException] {
@@ -111,7 +111,7 @@ class TermSpec extends FlatSpec {
         }
     }
 
-    behavior of "A RepetitionSep1 term"
+    behavior of "a RepetitionSep1 term"
 
     it should "require a non-null body" in {
         intercept[IllegalArgumentException] {

@@ -8,7 +8,7 @@ import org.nedervold.grammareditor.grammar.Term
 import scala.collection.immutable.TreeSet
 
 class AddUndefinedProductionsTransformationSpec extends FlatSpec {
-    behavior of "An AddUndefinedProductionsTransformation"
+    behavior of "an AddUndefinedProductionsTransformation"
 
     it should "require a non-null grammar" in {
         intercept[NullPointerException] {

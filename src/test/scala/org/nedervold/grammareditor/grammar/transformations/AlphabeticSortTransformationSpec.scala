@@ -9,7 +9,7 @@ import scala.collection.immutable.TreeSet
 import org.nedervold.grammareditor.grammar.Epsilon
 
 class AlphabeticSortTransformationSpec extends FlatSpec {
-    behavior of "An AlphabeticSortTransformation"
+    behavior of "an AlphabeticSortTransformation"
 
     it should "require a non-null grammar" in {
         intercept[IllegalArgumentException] {

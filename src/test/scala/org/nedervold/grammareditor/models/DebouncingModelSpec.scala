@@ -9,7 +9,7 @@ import org.scalatest.DoNotDiscover
 
 @DoNotDiscover
 class DebouncingModelSpec extends FlatSpec {
-    behavior of "A DebouncingModel"
+    behavior of "a DebouncingModel"
 
     /*
 	 * All of these tests are problematic in that they use the system clock and multithreading.

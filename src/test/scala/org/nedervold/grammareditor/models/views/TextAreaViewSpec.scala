@@ -4,7 +4,7 @@ import org.scalatest.FlatSpec
 import org.nedervold.grammareditor.models.VarModel
 
 class TextAreaViewSpec extends FlatSpec {
-    behavior of "A TextViewSpec"
+    behavior of "a TextViewSpec"
 
     it should "require a non-null Model" in {
         intercept[IllegalArgumentException] {
