@@ -13,7 +13,7 @@ class TermSpec extends FlatSpec {
 
     it should "print as its name" in {
         val name = "BOB"
-        assert(new Terminal(name).toString == name)
+        assert(new Terminal(name).toString === name)
     }
 
     it should "contain no nonterminals" in {
@@ -22,7 +22,7 @@ class TermSpec extends FlatSpec {
 
     it should "contain only itself as terminal" in {
         val terminal = new Terminal("term");
-        assert(terminal.terminals == Set(terminal))
+        assert(terminal.terminals === Set(terminal))
     }
 
     behavior of "A Nonterminal"
@@ -35,7 +35,7 @@ class TermSpec extends FlatSpec {
 
     it should "print as its name" in {
         val name = "bob"
-        assert(new Nonterminal(name).toString == name)
+        assert(new Nonterminal(name).toString === name)
     }
 
     it should "contain no terminals" in {
@@ -44,7 +44,7 @@ class TermSpec extends FlatSpec {
 
     it should "contain only itself as nonterminal" in {
         val nonterminal = new Nonterminal("nonterm");
-        assert(nonterminal.nonterminals == Set(nonterminal))
+        assert(nonterminal.nonterminals === Set(nonterminal))
     }
 
     behavior of "A Sequenced term"

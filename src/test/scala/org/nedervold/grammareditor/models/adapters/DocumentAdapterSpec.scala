@@ -17,7 +17,7 @@ class DocumentAdapterSpec extends FlatSpec {
         }
     }
 
-    it should "contain a non-null document" in {
+    it should "contain a non-null document even if it wasn't given one" in {
         assert(new DocumentAdapter().document !== null)
         val doc = new PlainDocument()
         assert(new DocumentAdapter(doc).document !== null)

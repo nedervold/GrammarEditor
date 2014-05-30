@@ -8,6 +8,6 @@ class ConstModelSpec extends FlatSpec {
     it should "return the value it was initialized with" in {
         val value = 5
         val constModel = new ConstModel(value)
-        assert(constModel.value == value)
+        assert(constModel.value === value)
     }
 }

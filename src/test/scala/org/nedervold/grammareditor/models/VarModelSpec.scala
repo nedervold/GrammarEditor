@@ -16,7 +16,7 @@ class VarModelSpec extends FlatSpec {
     it should "return the value it was initialized with" in {
         val value = 5
         val varModel = new VarModel(value)
-        assert(varModel.value == value)
+        assert(varModel.value === value)
     }
 
     it should "return a new value after a new value is set" in {
@@ -24,7 +24,7 @@ class VarModelSpec extends FlatSpec {
         val varModel = new VarModel(value)
         val newValue = -3
         varModel.value = newValue
-        assert(varModel.value == newValue)
+        assert(varModel.value === newValue)
     }
 
     it should "publish an event when the new value is different" in {

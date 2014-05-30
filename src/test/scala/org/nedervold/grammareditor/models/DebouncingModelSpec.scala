@@ -132,6 +132,6 @@ class DebouncingModelSpec extends FlatSpec {
             varModel.value = !varModel.value;
         }
         Thread.sleep(20)
-        assert(eventsHeard == 1)
+        assert(eventsHeard === 1)
     }
 }

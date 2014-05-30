@@ -21,14 +21,14 @@ class FmapModelSpec extends FlatSpec {
     it should "return the value of its function applied to the value of the base model" in {
         val constModel = new ConstModel(5)
         val fmapModel = new FmapModel(square, constModel)
-        assert(fmapModel.value == 25)
+        assert(fmapModel.value === 25)
     }
 
     it should "change value when its base model changes value" in {
         val varModel = new VarModel(5)
         val fmapModel = new FmapModel(square, varModel)
         varModel.value = 3
-        assert(fmapModel.value == 9)
+        assert(fmapModel.value === 9)
     }
 
     it should "publish an event when the new value is different" in {
