@@ -19,6 +19,7 @@ import org.nedervold.grammareditor.models.viewcontrollers.DocumentViewController
 import org.nedervold.grammareditor.models.views.TextAreaView
 import scala.swing.Swing
 import java.awt.Color
+import org.nedervold.grammareditor.grammar.Grammar
 
 object Main extends SimpleSwingApplication {
     System.setProperty("apple.laf.useScreenMenuBar", "true")
@@ -33,10 +34,8 @@ object Main extends SimpleSwingApplication {
      * @return display of the nonterminals
      */
     def nonterminalsDisplay(source: String): String = {
-        GrammarParser.parseGrammar(source) match {
-            case Left(msg) => ""
-            case Right(grammar) => grammar.nonterminals.mkString(", ")
-        }
+        def displayNonterminals(gram: Grammar): String = gram.nonterminals.mkString(", ")
+        GrammarParser.parseGrammar(source).map(displayNonterminals).getOrElse("")
     }
 
     /**
@@ -46,10 +45,8 @@ object Main extends SimpleSwingApplication {
      * @return display of the terminals
      */
     def terminalsDisplay(source: String): String = {
-        GrammarParser.parseGrammar(source) match {
-            case Left(msg) => ""
-            case Right(grammar) => grammar.terminals.mkString(", ")
-        }
+        def displayTerminals(gram: Grammar): String = gram.terminals.mkString(", ")
+        GrammarParser.parseGrammar(source).map(displayTerminals).getOrElse("")
     }
 
     /**

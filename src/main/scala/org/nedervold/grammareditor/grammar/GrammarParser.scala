@@ -1,6 +1,9 @@
 package org.nedervold.grammareditor.grammar
 
 import scala.util.parsing.combinator.RegexParsers
+import scala.util.Try
+import scala.util.Success
+import scala.util.Failure
 
 /**
  * Parses source text into [[Grammar]]s (or not).
@@ -9,12 +12,12 @@ object GrammarParser {
     /**
      * Parses the source text
      * @param input the source text
-     * @return Left(msg) if the parse failed; Right(grammar) if the parse succeeds
+     * @return the grammar or an Exception
      */
-    def parseGrammar(input: String): Either[String, Grammar] = {
+    def parseGrammar(input: String): Try[Grammar] = {
         Impl.parseAll(Impl.grammar, input) match {
-            case Impl.Success(g, _) => Right(g)
-            case Impl.NoSuccess(msg, _) => Left(msg)
+            case Impl.Success(g, _) => Success(g)
+            case Impl.NoSuccess(msg, _) => Failure(new Exception(msg))
         }
     }
 
@@ -33,7 +36,7 @@ object GrammarParser {
             case nonterminal ~ optRhs => Production(nonterminal, optRhs)
         }
 
-        private def rhs = "::=" ~> alternatives 
+        private def rhs = "::=" ~> alternatives
 
         private def alternatives: Parser[Term] = rep1sep(sequence_, "|") ^^ { alternate(_) }
 
