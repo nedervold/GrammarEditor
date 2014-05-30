@@ -7,6 +7,12 @@ import org.scalatest.FlatSpec
 class VarModelSpec extends FlatSpec {
     behavior of "A VarModel"
 
+    it should "require a non-null elmtEqual predicate" in {
+        intercept[IllegalArgumentException] {
+            new VarModel(5, null)
+        }
+    }
+
     it should "return the value it was initialized with" in {
         val value = 5
         val varModel = new VarModel(value)

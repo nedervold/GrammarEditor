@@ -11,7 +11,9 @@ package org.nedervold.grammareditor.models
 abstract class CachingModel[T](initValue: T,
                                val elmtEquals: (T, T) => Boolean)
     extends Model[T] {
-    private[this] var cachedValue = initValue;
+    require(elmtEquals != null)
+
+    private var cachedValue = initValue;
 
     def value = cachedValue;
 

@@ -9,8 +9,8 @@ package org.nedervold.grammareditor.grammar
  * @param lhs the [[Nonterminal]] that this production defines
  * @param rhs contains the [[Term]] that defines this production or empty if the production is undefined
  */
-case class Production(val lhs: Nonterminal,
-                      val rhs: Option[Term]) extends Syntax {
+sealed case class Production(val lhs: Nonterminal,
+                             val rhs: Option[Term]) extends Syntax {
     require(lhs != null)
     require(rhs != null)
 
@@ -35,7 +35,7 @@ case class Production(val lhs: Nonterminal,
     }
 
     /**
-     * Is this production defined
+     * Returns true if this production is defined
      * @return true iff defined
      */
     def isDefined = rhs.nonEmpty

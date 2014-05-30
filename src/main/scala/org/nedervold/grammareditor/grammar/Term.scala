@@ -5,7 +5,7 @@ package org.nedervold.grammareditor.grammar
  * @author nedervold
  *
  */
-trait Term extends Syntax
+sealed trait Term extends Syntax
 
 /**
  * Printing utilities for [[Term]]
@@ -38,7 +38,7 @@ trait TermPrinting {
  * @constructor
  * @param name the name of the nonterminal
  */
-case class Nonterminal(val name: String) extends Term with TermPrinting with Ordered[Nonterminal] {
+sealed case class Nonterminal(val name: String) extends Term with TermPrinting with Ordered[Nonterminal] {
     require(name != null)
     def foreach[U](f: Term => U): Unit = { f(this) }
     def toStringPrec(prec: Int) = name
@@ -51,7 +51,7 @@ case class Nonterminal(val name: String) extends Term with TermPrinting with Ord
  * @constructor
  * @param name the name of the terminal
  */
-case class Terminal(val name: String) extends Term with TermPrinting with Ordered[Terminal] {
+sealed case class Terminal(val name: String) extends Term with TermPrinting with Ordered[Terminal] {
     require(name != null)
     def foreach[U](f: Term => U): Unit = { f(this) }
     def toStringPrec(prec: Int) = name
