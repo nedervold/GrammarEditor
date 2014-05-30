@@ -30,6 +30,8 @@ import org.nedervold.grammareditor.grammar.transformations.FormatTransformation
 import scala.swing.Action
 import org.nedervold.grammareditor.models.ModelChangedEvent
 import scala.swing.MenuItem
+import org.nedervold.grammareditor.grammar.transformations.AlphabeticSortTransformation
+import org.nedervold.grammareditor.grammar.transformations.DepthFirstSortTransformation
 
 object Main extends SimpleSwingApplication {
     System.setProperty("apple.laf.useScreenMenuBar", "true")
@@ -37,7 +39,7 @@ object Main extends SimpleSwingApplication {
     val rawGrammarSource = new DocumentAdapter
     val grammarSource = new DebouncingModel(rawGrammarSource, 500, TimeUnit.MILLISECONDS)
     val grammar: Model[Try[Grammar]] = new FmapModel(GrammarParser.parseGrammar(_: String), grammarSource)
-    val grammarValidModel: Model[Boolean] = new FmapModel((_ : Try[Grammar]).isSuccess, grammar)
+    val grammarValidModel: Model[Boolean] = new FmapModel((_: Try[Grammar]).isSuccess, grammar)
     /**
      * Parses the grammar and if it's successful, displays the nonterminals
      *
@@ -101,7 +103,7 @@ object Main extends SimpleSwingApplication {
             contents += new Menu("File")
             contents += new Menu("Edit") {
                 for (
-                    xform <- List(FormatTransformation)
+                    xform <- List(FormatTransformation, AlphabeticSortTransformation, DepthFirstSortTransformation)
                 ) {
                     val action = new Action(xform.displayName) {
                         def apply = {

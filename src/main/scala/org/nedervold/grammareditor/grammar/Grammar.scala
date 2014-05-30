@@ -20,6 +20,14 @@ sealed case class Grammar(val productions: Seq[Production]) extends Syntax {
      */
     def isDefined = productions.forall(_.isDefined);
 
+    /**
+     * Treats a [[Grammar]] as a map from [[Production]] heads to [[Production]]s.
+     *
+     * @param nt the head of the [[Production]] to find
+     * @return the production, if found
+     */
+    def apply(nt: Nonterminal) = productions.find((p) => p.lhs == nt)
+
     def definedNonterminals = TreeSet[Nonterminal]() ++ productions.collect {
         case Production(nt, Some(_)) => nt
     }
