@@ -2,9 +2,9 @@ import AssemblyKeys._
 
 assemblySettings
 
-jarName in assembly := "Main.jar"
+jarName in assembly := "GrammarEditor.jar"
 
-name := "Main"
+name := "GrammarEditor"
 
 version := "0.1"
 
@@ -24,9 +24,9 @@ appbundle.javaVersion := "1.6+"
 
 appbundle.screenMenu := false
 
-appbundle.name := "Main"
+appbundle.name := "GrammarEditor"
 
-appbundle.normalizedName := "Main"
+appbundle.normalizedName := "GrammarEditor"
 
 appbundle.organization := "org.nedervold"
 

@@ -40,11 +40,11 @@ import scala.io.Source
 
 object Main extends SimpleSwingApplication {
     System.setProperty("apple.laf.useScreenMenuBar", "true")
-
+ 
     val rawGrammarSource = new DocumentAdapter
     val grammarSource = new DebouncingModel(rawGrammarSource, 500, TimeUnit.MILLISECONDS)
     val grammar: Model[Try[Grammar]] = new FmapModel(GrammarParser.parseGrammar(_: String), grammarSource)
-    val grammarValidModel: Model[Boolean] = new FmapModel((_: Try[Grammar]).isSuccess, grammar)
+    val grammarIsValid: Model[Boolean] = new FmapModel((_: Try[Grammar]).isSuccess, grammar)
     /**
      * Parses the grammar and if it's successful, displays the nonterminals
      *
@@ -120,11 +120,11 @@ object Main extends SimpleSwingApplication {
     }
 
     /**
-     * Opens a user-selected file and puts the (pretty-printed) contents 
+     * Opens a user-selected file and puts the (pretty-printed) contents
      * of the edit panel into it.
      */
     def saveCmd() = {
-        assert(grammarValidModel.value)
+        assert(grammarIsValid.value)
         val fileChooser: FileChooser = new FileChooser( /* dir */ ) {
             title = "Save As..."
             fileFilter = new FileNameExtensionFilter("Grammar as text", "txt");
@@ -161,10 +161,10 @@ object Main extends SimpleSwingApplication {
                     enabled = true;
                 }
                 reactions += {
-                    case ModelChangedEvent(`grammarValidModel`) => saveAction.enabled = grammarValidModel.value;
+                    case ModelChangedEvent(`grammarIsValid`) => saveAction.enabled = grammarIsValid.value;
                 }
-                listenTo(grammarValidModel)
-                saveAction.enabled = grammarValidModel.value
+                listenTo(grammarIsValid)
+                saveAction.enabled = grammarIsValid.value
                 contents += new MenuItem(openAction);
                 contents += new MenuItem(saveAction);
             }
@@ -181,10 +181,10 @@ object Main extends SimpleSwingApplication {
                         enabled = true;
                     }
                     reactions += {
-                        case ModelChangedEvent(`grammarValidModel`) => action.enabled = grammarValidModel.value;
+                        case ModelChangedEvent(`grammarIsValid`) => action.enabled = grammarIsValid.value;
                     }
-                    listenTo(grammarValidModel)
-                    action.enabled = grammarValidModel.value
+                    listenTo(grammarIsValid)
+                    action.enabled = grammarIsValid.value
                     contents += new MenuItem(action)
                 }
             }
