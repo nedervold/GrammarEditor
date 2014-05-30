@@ -33,7 +33,16 @@ object GrammarParser {
             case nonterminal ~ optRhs => Production(nonterminal, optRhs)
         }
 
-        private def rhs = "::=" ~> term
+        private def rhs = "::=" ~> rep(term) ^^ ((terms) => sequence(terms: _*))
+
+        private def alternatives: Parser[Term] = rep1sep(sequence_, "|") ^^ { alternate(_) }
+
+        /*
+         * "Sequence" can be a verb or a noun, so we append an underscore
+         * here (to the noun) to avoid clashing with the package function (the verb).
+         */
+        private def sequence_ : Parser[Term] = rep(term) ^^ { sequence(_) }
+
         private def term: Parser[Term] = nonterminal | terminal
 
         private def nonterminal = """[a-z][a-z0-9_]*""".r ^^ (Nonterminal(_))

@@ -46,4 +46,28 @@ class TermSpec extends FlatSpec {
         val nonterminal = new Nonterminal("nonterm");
         assert(nonterminal.nonterminals == Set(nonterminal))
     }
+
+    behavior of "A Sequenced term"
+
+    it should "require an lhs and rhs" in {
+        val t = new Terminal("T")
+        intercept[IllegalArgumentException] {
+            new Sequenced(null, t)
+        }
+        intercept[IllegalArgumentException] {
+            new Sequenced(t, null)
+        }
+    }
+
+    behavior of "An Or term"
+
+    it should "require an lhs and rhs" in {
+        val t = new Terminal("T")
+        intercept[IllegalArgumentException] {
+            new Or(null, t)
+        }
+        intercept[IllegalArgumentException] {
+            new Or(t, null)
+        }
+    }
 }

@@ -5,7 +5,7 @@ package org.nedervold.grammareditor.grammar
  * @author nedervold
  *
  */
-sealed trait Term extends Syntax
+sealed trait Term extends Syntax with TermPrinting
 
 /**
  * Printing utilities for [[Term]]
@@ -38,7 +38,7 @@ trait TermPrinting {
  * @constructor
  * @param name the name of the nonterminal
  */
-sealed case class Nonterminal(val name: String) extends Term with TermPrinting with Ordered[Nonterminal] {
+sealed case class Nonterminal(val name: String) extends Term with Ordered[Nonterminal] {
     require(name != null)
     def foreach[U](f: Term => U): Unit = { f(this) }
     def toStringPrec(prec: Int) = name
@@ -51,9 +51,56 @@ sealed case class Nonterminal(val name: String) extends Term with TermPrinting w
  * @constructor
  * @param name the name of the terminal
  */
-sealed case class Terminal(val name: String) extends Term with TermPrinting with Ordered[Terminal] {
+sealed case class Terminal(val name: String) extends Term with Ordered[Terminal] {
     require(name != null)
     def foreach[U](f: Term => U): Unit = { f(this) }
     def toStringPrec(prec: Int) = name
     def compare(that: Terminal) = this.name.compare(that.name)
 }
+
+/**
+ * The term representing no terms
+ */
+case object Epsilon extends Term {
+    def toStringPrec(prec: Int) = ""
+    def foreach[U](f: Term => U): Unit = { f(this) }
+}
+
+/**
+ * A term representing two terms, one after another
+ * @author nedervold
+ * @constructor
+ * @param lhs the first term
+ * @param rhs the second term
+ */
+case class Sequenced(val lhs: Term, val rhs: Term) extends Term {
+    require(lhs != null)
+    require(rhs != null)
+    def toStringPrec(prec: Int) = parensIf(prec > 1, lhs.toStringPrec(2) + " " + rhs.toStringPrec(1))
+    def foreach[U](f: Term => U): Unit = { f(this); lhs.foreach(f); rhs.foreach(f) }
+}
+
+/**
+ * The term representing no alternatives: an impossible parse
+ * @author nedervold
+ */
+case object Fail extends Term {
+    def toStringPrec(prec: Int) = "<fail>"
+    def foreach[U](f: Term => U): Unit = { f(this) }
+}
+
+/**
+ * A term representing the choice of two terms, one or the other
+ * @author nedervold
+ * @constructor
+ * @param lhs the first term
+ * @param rhs the second term
+ */
+case class Or(val lhs: Term, val rhs: Term) extends Term {
+    require(lhs != null)
+    require(rhs != null)
+
+    def toStringPrec(prec: Int) = parensIf(prec > 0, lhs.toStringPrec(1) + " | " + rhs.toStringPrec(0))
+    def foreach[U](f: Term => U): Unit = { f(this); lhs.foreach(f); rhs.foreach(f) }
+}
+
