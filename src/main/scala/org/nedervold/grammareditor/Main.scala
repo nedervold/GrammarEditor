@@ -37,14 +37,34 @@ import scala.swing.FileChooser
 import javax.swing.filechooser.FileNameExtensionFilter
 import java.io.PrintWriter
 import scala.io.Source
+import java.io.File
+import org.nedervold.grammareditor.models.VarModel
+import org.nedervold.grammareditor.models.Fmap2Model
 
 object Main extends SimpleSwingApplication {
     System.setProperty("apple.laf.useScreenMenuBar", "true")
- 
+
     val rawGrammarSource = new DocumentAdapter
     val grammarSource = new DebouncingModel(rawGrammarSource, 500, TimeUnit.MILLISECONDS)
     val grammar: Model[Try[Grammar]] = new FmapModel(GrammarParser.parseGrammar(_: String), grammarSource)
     val grammarIsValid: Model[Boolean] = new FmapModel((_: Try[Grammar]).isSuccess, grammar)
+
+    val documentPath: VarModel[Option[File]] = new VarModel(None)
+    val dirty = new VarModel(false)
+
+    reactions += {
+        case ModelChangedEvent(`rawGrammarSource`) => dirty.value = true;
+    }
+    listenTo(rawGrammarSource)
+
+    def mkTitle(optFile: Option[File], dirty: Boolean): String = {
+        (optFile match {
+            case Some(file) => "GrammarEditor — " + file.getName
+            case None => "Grammar Editor"
+        }) + (if (dirty) " •" else "")
+    }
+    val titleModel = new Fmap2Model(mkTitle, documentPath, dirty)
+
     /**
      * Parses the grammar and if it's successful, displays the nonterminals
      *
@@ -112,10 +132,23 @@ object Main extends SimpleSwingApplication {
         val res = fileChooser.showOpenDialog(null);
         res match {
             case FileChooser.Result.Approve => {
-                val src = Source.fromFile(fileChooser.selectedFile, "UTF-8")
+                val file = fileChooser.selectedFile
+                val src = Source.fromFile(file, "UTF-8")
                 rawGrammarSource.value = src.mkString
+                documentPath.value = Some(file)
+                dirty.value = false
             }
             case _ => {}
+        }
+    }
+
+    /**
+     * Saves the (pretty-printed) contents of the edit panel into the file
+     */
+    def saveCmd() = {
+        documentPath.value match {
+            case Some(file) => writeToFile(file)
+            case None => assert(false)
         }
     }
 
@@ -123,7 +156,7 @@ object Main extends SimpleSwingApplication {
      * Opens a user-selected file and puts the (pretty-printed) contents
      * of the edit panel into it.
      */
-    def saveCmd() = {
+    def saveAsCmd() = {
         assert(grammarIsValid.value)
         val fileChooser: FileChooser = new FileChooser( /* dir */ ) {
             title = "Save As..."
@@ -133,19 +166,19 @@ object Main extends SimpleSwingApplication {
 
         res match {
             case FileChooser.Result.Approve => {
-                val out = new PrintWriter(fileChooser.selectedFile, "UTF-8")
-                try {
-                    out.print(grammar.value.get.toString)
-                } finally {
-                    out.close
-                }
+                val file = fileChooser.selectedFile
+                writeToFile(file)
             }
             case _ => {}
         }
     }
 
     def top = new MainFrame {
-        title = "Grammar Editor"
+        reactions += {
+            case ModelChangedEvent(`titleModel`) => title = titleModel.value
+        }
+        listenTo(titleModel)
+        title = titleModel.value
 
         menuBar = new MenuBar {
             contents += new Menu("File") {
@@ -155,18 +188,27 @@ object Main extends SimpleSwingApplication {
                     accelerator = mkAccelerator('O')
                     enabled = true;
                 }
-                val saveAction = new Action("Save As...") {
+                val saveAction = new Action("Save") {
                     def apply = saveCmd()
                     accelerator = mkAccelerator('S')
+                    enabled = false
+                }
+                val saveAsAction = new Action("Save As...") {
+                    def apply = saveAsCmd()
+                    // accelerator = mkAccelerator('S')
                     enabled = true;
                 }
                 reactions += {
-                    case ModelChangedEvent(`grammarIsValid`) => saveAction.enabled = grammarIsValid.value;
+                    case ModelChangedEvent(`documentPath`) => saveAction.enabled = documentPath.value.nonEmpty;
+                    case ModelChangedEvent(`grammarIsValid`) => saveAsAction.enabled = grammarIsValid.value;
                 }
+                listenTo(documentPath)
                 listenTo(grammarIsValid)
-                saveAction.enabled = grammarIsValid.value
+                saveAction.enabled = documentPath.value.nonEmpty
+                saveAsAction.enabled = grammarIsValid.value
                 contents += new MenuItem(openAction);
                 contents += new MenuItem(saveAction);
+                contents += new MenuItem(saveAsAction);
             }
 
             contents += new Menu("Edit") {
@@ -219,5 +261,16 @@ object Main extends SimpleSwingApplication {
         }
 
         size = new Dimension(800, 600)
+    }
+
+    private def writeToFile(file: java.io.File): Unit = {
+        val out = new PrintWriter(file, "UTF-8")
+        try {
+            out.print(grammar.value.get.toString)
+            documentPath.value = Some(file)
+            dirty.value = false
+        } finally {
+            out.close
+        }
     }
 }
