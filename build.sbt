@@ -32,4 +32,4 @@ appbundle.organization := "org.nedervold"
 
 appbundle.version := "0.2.0"
 
-appbundle.icon := None 
+appbundle.icon := Some(file("src/main/resources/GrammarEditor.icns"))
