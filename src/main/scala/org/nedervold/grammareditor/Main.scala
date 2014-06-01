@@ -50,8 +50,8 @@ object Main extends SimpleSwingApplication {
     val grammarIsValid: Model[Boolean] = new FmapModel((_: Try[Grammar]).isSuccess, grammar)
 
     val documentPath: VarModel[Option[File]] = new VarModel(None)
-    val dirty = new VarModel(false)
 
+    val dirty = new VarModel(false)
     reactions += {
         case ModelChangedEvent(`rawGrammarSource`) => dirty.value = true;
     }
@@ -142,14 +142,27 @@ object Main extends SimpleSwingApplication {
         }
     }
 
+    import org.nedervold.grammareditor.grammar.transformations.mkAccelerator
+    val openAction = new Action("Open...") {
+        def apply = openCmd()
+        accelerator = mkAccelerator('O')
+        enabled = true;
+    }
+
     /**
      * Saves the (pretty-printed) contents of the edit panel into the file
      */
     def saveCmd() = {
         documentPath.value match {
             case Some(file) => writeToFile(file)
-            case None => assert(false)
+            case None => saveAsCmd()
         }
+    }
+
+    val saveAction = new Action("Save") {
+        def apply = saveCmd()
+        accelerator = mkAccelerator('S')
+        enabled = false
     }
 
     /**
@@ -173,6 +186,21 @@ object Main extends SimpleSwingApplication {
         }
     }
 
+    val saveAsAction = new Action("Save As...") {
+        def apply = saveAsCmd()
+        enabled = false;
+    }
+
+    reactions += {
+        case ModelChangedEvent(`grammarIsValid`) => {
+            saveAction.enabled = grammarIsValid.value;
+            saveAsAction.enabled = grammarIsValid.value;
+        }
+    }
+    listenTo(grammarIsValid)
+    saveAction.enabled = grammarIsValid.value
+    saveAsAction.enabled = grammarIsValid.value
+
     def top = new MainFrame {
         reactions += {
             case ModelChangedEvent(`titleModel`) => title = titleModel.value
@@ -182,30 +210,6 @@ object Main extends SimpleSwingApplication {
 
         menuBar = new MenuBar {
             contents += new Menu("File") {
-                import org.nedervold.grammareditor.grammar.transformations.mkAccelerator
-                val openAction = new Action("Open...") {
-                    def apply = openCmd()
-                    accelerator = mkAccelerator('O')
-                    enabled = true;
-                }
-                val saveAction = new Action("Save") {
-                    def apply = saveCmd()
-                    accelerator = mkAccelerator('S')
-                    enabled = false
-                }
-                val saveAsAction = new Action("Save As...") {
-                    def apply = saveAsCmd()
-                    // accelerator = mkAccelerator('S')
-                    enabled = true;
-                }
-                reactions += {
-                    case ModelChangedEvent(`documentPath`) => saveAction.enabled = documentPath.value.nonEmpty;
-                    case ModelChangedEvent(`grammarIsValid`) => saveAsAction.enabled = grammarIsValid.value;
-                }
-                listenTo(documentPath)
-                listenTo(grammarIsValid)
-                saveAction.enabled = documentPath.value.nonEmpty
-                saveAsAction.enabled = grammarIsValid.value
                 contents += new MenuItem(openAction);
                 contents += new MenuItem(saveAction);
                 contents += new MenuItem(saveAsAction);
@@ -241,12 +245,14 @@ object Main extends SimpleSwingApplication {
             contents = new BoxPanel(Orientation.Vertical) {
                 val terminalsView = new TextAreaView(terminalsModel) {
                     lineWrap = true
+                    wordWrap = true
                     border = Swing.TitledBorder(Swing.LineBorder(Color.BLACK), "Terminals")
                 }
                 contents += terminalsView
 
                 val nonterminalsView = new TextAreaView(nonterminalsModel) {
                     lineWrap = true
+                    wordWrap = true
                     border = Swing.TitledBorder(Swing.LineBorder(Color.BLACK), "Nonterminals")
                 }
                 contents += nonterminalsView
