@@ -40,6 +40,8 @@ import scala.io.Source
 import java.io.File
 import org.nedervold.grammareditor.models.VarModel
 import org.nedervold.grammareditor.models.Fmap2Model
+import javax.swing.undo.UndoManager
+import org.nedervold.grammareditor.models.PolledModel
 
 object Main extends SimpleSwingApplication {
     System.setProperty("apple.laf.useScreenMenuBar", "true")
@@ -201,6 +203,18 @@ object Main extends SimpleSwingApplication {
     saveAction.enabled = grammarIsValid.value
     saveAsAction.enabled = grammarIsValid.value
 
+    val undoManager = new UndoManager
+    val undoAction = new Action("Undo") {
+        def apply = if (undoManager.canUndo) undoManager.undo else println("can't undo")
+        accelerator = mkAccelerator('Z')
+        enabled = true
+    }
+    val redoAction = new Action("Redo") {
+        def apply = if (undoManager.canRedo) undoManager.redo else println("can't redo")
+        accelerator = mkAccelerator('Y')
+        enabled = true
+    }
+
     def top = new MainFrame {
         reactions += {
             case ModelChangedEvent(`titleModel`) => title = titleModel.value
@@ -216,6 +230,8 @@ object Main extends SimpleSwingApplication {
             }
 
             contents += new Menu("Edit") {
+                contents += new MenuItem(undoAction)
+                contents += new MenuItem(redoAction)
                 for (
                     xform <- List(Format, AlphabeticSort, DepthFirstSort)
                 ) {
@@ -237,22 +253,22 @@ object Main extends SimpleSwingApplication {
         }
 
         val editPanel = new ScrollPane {
-            viewportView = new DocumentViewController(rawGrammarSource)
+            val docView = new DocumentViewController(rawGrammarSource)
+            docView.peer.getDocument.addUndoableEditListener(undoManager)
+            viewportView = docView
             verticalScrollBarPolicy = ScrollPane.BarPolicy.Always
         }
 
         val infoPanel = new ScrollPane {
             contents = new BoxPanel(Orientation.Vertical) {
                 val terminalsView = new TextAreaView(terminalsModel) {
-                    lineWrap = true
-                    wordWrap = true
+                    lineWrap = true; wordWrap = true
                     border = Swing.TitledBorder(Swing.LineBorder(Color.BLACK), "Terminals")
                 }
                 contents += terminalsView
 
                 val nonterminalsView = new TextAreaView(nonterminalsModel) {
-                    lineWrap = true
-                    wordWrap = true
+                    lineWrap = true; wordWrap = true
                     border = Swing.TitledBorder(Swing.LineBorder(Color.BLACK), "Nonterminals")
                 }
                 contents += nonterminalsView
