@@ -27,6 +27,12 @@ object StandardTopDownForm extends GrammarTransformation {
             new SyntheticNonterminal(tag, count, source);
         }
 
+        def mkOptional(term: Term): Nonterminal = {
+            val nt = synthNonterminal("opt", term)
+            toDo += new Production(nt, term)
+            nt
+        }
+
         def toSeqElmt(term: Term): Term = {
             term match {
                 case Terminal(_) => term
@@ -41,11 +47,7 @@ object StandardTopDownForm extends GrammarTransformation {
                     toDo += new Production(nt, term)
                     nt
                 }
-                case Optional(t) => {
-                    val nt = synthNonterminal("opt", term)
-                    toDo += new Production(nt, term)
-                    nt
-                }
+                case Optional(t) => mkOptional(t)
                 case Repetition0(t) => {
                     val nt = synthNonterminal("rep0", term)
                     val newT = toSeqElmt(t)
@@ -107,6 +109,15 @@ object StandardTopDownForm extends GrammarTransformation {
             }
         }
 
+        def zipWith[A, B, C](f: (A, B) => C, as: Seq[A], bs: Seq[B]): Seq[C] = {
+            def fPrime(p: Tuple2[A, B]): C = {
+                p match {
+                    case (a, b) => f(a, b)
+                }
+            }
+            as.zip(bs).map(fPrime)
+        }
+
         def toAlts(term: Term): List[Term] = {
             term match {
                 case Fail => List()
@@ -122,7 +133,12 @@ object StandardTopDownForm extends GrammarTransformation {
                 case AtLeastOne(ts) => ts match {
                     case Nil => throw new Exception("Impossible");
                     case t :: Nil => toAlts(t)
-                    case t :: ts => toAlts(alternate(sequence(t :: ts.map(Optional(_))), AtLeastOne(ts)))
+                    case _ => {
+                        val opts: Seq[Term] = ts.tail.map(mkOptional(_))
+                        val tls: Seq[Seq[Term]] = opts.tails.toSeq
+                        def cons(a: Term, b: Seq[Term]): Term = { sequence((a +: b).toList) }
+                        zipWith(cons, ts, tls).toList
+                    }
                 }
                 case _ => List(term)
             }
