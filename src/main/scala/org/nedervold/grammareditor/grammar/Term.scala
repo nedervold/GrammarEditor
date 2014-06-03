@@ -184,3 +184,15 @@ case class RepetitionSep1(val body: Term, val sep: Term) extends Term {
     def foreach[U](f: Term => U): Unit = { f(this); body.foreach(f); sep.foreach(f) }
 }
 
+/**
+ * A sequences of optional terms, at least one of which must not be missing.
+ * @author nedervold
+ * @param terms the optional terms
+ */
+case class AtLeastOne(val terms: Seq[Term]) extends Term {
+    require(terms != null)
+    require(terms.forall(_ != null))
+
+    def toStringPrec(prec: Int) = "<<" + terms.mkString(" ") + ">>"
+    def foreach[U](f: Term => U): Unit = { f(this); terms.foreach(f); }
+}

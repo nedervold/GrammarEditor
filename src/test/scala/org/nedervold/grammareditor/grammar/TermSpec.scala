@@ -127,4 +127,17 @@ class TermSpec extends FlatSpec {
         }
     }
 
+    behavior of "an AtLeastOne term"
+
+    it should "require non-null terms" in {
+        intercept[IllegalArgumentException] {
+            new AtLeastOne(null)
+        }
+
+        val t = new Terminal("T")
+        intercept[IllegalArgumentException] {
+            new AtLeastOne(Seq(t, null))
+        }
+    }
+
 }

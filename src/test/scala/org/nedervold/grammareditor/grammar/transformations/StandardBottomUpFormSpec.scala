@@ -13,7 +13,10 @@ class StandardBottomUpFormSpec extends FlatSpec {
     }
 
     it should "result in standard form" in {
-        assert(!SampleGrammar.grammar.isInStandardForm)
-        assert(StandardBottomUpForm(SampleGrammar.grammar).isInStandardForm)
+        assert(!SampleGrammars.grammar1.isInStandardForm)
+        assert(StandardBottomUpForm(SampleGrammars.grammar1).isInStandardForm)
+
+        assert(!SampleGrammars.grammar2.isInStandardForm)
+        assert(StandardBottomUpForm(SampleGrammars.grammar2).isInStandardForm)
     }
 }

@@ -2,8 +2,8 @@ package org.nedervold.grammareditor.grammar.transformations
 
 import org.nedervold.grammareditor.grammar.GrammarParser
 
-object SampleGrammar {
-    val src = """grammar ::= {production}+.
+object SampleGrammars {
+    val src1 = """grammar ::= {production}+.
 	    	| production ::= NT [rhs] ".".
 		| rhs ::= "::=" alternatives.
 		| alternatives ::= {alternative ... "|"}+.
@@ -17,5 +17,9 @@ object SampleGrammar {
 		| terms ::= {term}+.
 		| group ::= "(" alternatives ")".""".stripMargin
 
-    val grammar = GrammarParser.parseGrammar(src).get
+    val grammar1 = GrammarParser.parseGrammar(src1).get
+
+    val src2 = """grammar ::= A << B C D >> E.""".stripMargin
+
+    val grammar2 = GrammarParser.parseGrammar(src2).get
 }

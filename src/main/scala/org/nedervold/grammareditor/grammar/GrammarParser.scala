@@ -46,7 +46,7 @@ object GrammarParser {
          */
         private def sequence_ : Parser[Term] = rep(term) ^^ { sequence(_) }
 
-        private def term: Parser[Term] = nonterminal | terminal | optional | repetition
+        private def term: Parser[Term] = nonterminal | terminal | optional | repetition | atLeastOne
 
         private def nonterminal = """[a-z][a-z0-9_]*""".r ^^ (Nonterminal(_))
 
@@ -66,20 +66,22 @@ object GrammarParser {
          * 
          * into an equivalent but LL(1) form by left-factoring.
          */
-        private def repetition = "{" ~> term ~ repetition_tail ^^ {
-            case body ~ rep_tail => rep_tail(body)
+        private def repetition = "{" ~> term ~ repetitionTail ^^ {
+            case body ~ repTail => repTail(body)
         }
 
-        private def repetition_tail = repsep_tail | rep_tail
-        private def repsep_tail: Parser[Term => Term] = "..." ~> term ~ rep_closer ^^ {
+        private def repetitionTail = repsepTail | repTail
+        private def repsepTail: Parser[Term => Term] = "..." ~> term ~ repCloser ^^ {
             case sep ~ 0 => RepetitionSep0(_, sep)
             case sep ~ 1 => RepetitionSep1(_, sep)
         }
-        private def rep_tail: Parser[Term => Term] = rep_closer ^^ {
+        private def repTail: Parser[Term => Term] = repCloser ^^ {
             case 0 => Repetition0(_)
             case 1 => Repetition1(_)
         }
 
-        private def rep_closer: Parser[Int] = "}+" ^^^ { 1 } | "}" ^^^ { 0 }
+        private def repCloser: Parser[Int] = "}+" ^^^ { 1 } | "}" ^^^ { 0 }
+
+        private def atLeastOne: Parser[Term] = "<<" ~> rep1(term) <~ ">>" ^^ { AtLeastOne(_) }
     }
 }

@@ -68,7 +68,7 @@ object StandardBottomUpForm extends GrammarTransformation {
                     toDo += new Production(nt, alternate(sequence(nt, newS, newB), newB))
                     nt
                 }
-                // case AtLeastOne(ts) => AtLeastOne(ts.map(toSeqElmt))
+                case AtLeastOne(ts) => AtLeastOne(ts.map(toSeqElmt))
                 case _ => term
             }
         }
@@ -107,15 +107,13 @@ object StandardBottomUpForm extends GrammarTransformation {
                     val withs = tails.map(t :: _)
                     withs ++ tails
                 }
+                case AtLeastOne(ts) :: ts2 => {
+                    val heads = allCombos(ts.toList).filterNot(_.isEmpty)
+                    val tails = flushOpts(ts2)
+                    for (hd <- heads; tl <- tails)
+                        yield hd ++ tl
 
-                //                case AtLeastOne(ts) :: ts2 => {
-                //                    val heads = allCombos(ts).filterNot(_.isEmpty)
-                //                    val tails = flushOpts(ts2)
-                //                    for (hd <- heads; tl <- tails)
-                //                        yield hd ++ tl
-                //
-                //                }
-
+                }
                 case t :: ts => {
                     flushOpts(ts).map(t :: _)
                 }

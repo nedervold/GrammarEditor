@@ -77,11 +77,11 @@ object StandardTopDownForm extends GrammarTransformation {
                     toDo += new Production(nt2, alternate(sequence(newS, newB, nt2), Epsilon))
                     nt
                 }
-                //                case AtLeastOne(ts) => {
-                //                    val nt = synthNonterminal("alo", term)
-                //                    toDo += new Production(nt, term)
-                //                    nt
-                //                }
+                case AtLeastOne(ts) => {
+                    val nt = synthNonterminal("alo", term)
+                    toDo += new Production(nt, term)
+                    nt
+                }
                 case _ => term
             }
         }
@@ -119,11 +119,11 @@ object StandardTopDownForm extends GrammarTransformation {
                     toDo += new Production(nt2, alternate(sequence(s, b, nt2), Epsilon))
                     List(nt, Epsilon)
                 }
-                //                case AtLeastOne(ts) => ts match {
-                //                    case Nil => throw new Exception("Impossible");
-                //                    case t :: Nil => toAlts(t)
-                //                    case t :: ts => toAlts(alternate(sequence(t :: ts.map(Optional(_))), AtLeastOne(ts)))
-                //                }
+                case AtLeastOne(ts) => ts match {
+                    case Nil => throw new Exception("Impossible");
+                    case t :: Nil => toAlts(t)
+                    case t :: ts => toAlts(alternate(sequence(t :: ts.map(Optional(_))), AtLeastOne(ts)))
+                }
                 case _ => List(term)
             }
         }
