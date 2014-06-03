@@ -42,6 +42,9 @@ import org.nedervold.grammareditor.models.VarModel
 import org.nedervold.grammareditor.models.Fmap2Model
 import javax.swing.undo.UndoManager
 import org.nedervold.grammareditor.models.PolledModel
+import org.nedervold.grammareditor.grammar.transformations.StandardBottomUpForm
+import org.nedervold.grammareditor.grammar.transformations.StandardTopDownForm
+import org.nedervold.grammareditor.grammar.transformations.StandardBottomUpForm
 
 object Main extends SimpleSwingApplication {
     System.setProperty("apple.laf.useScreenMenuBar", "true")
@@ -233,7 +236,7 @@ object Main extends SimpleSwingApplication {
                 contents += new MenuItem(undoAction)
                 contents += new MenuItem(redoAction)
                 for (
-                    xform <- List(Format, AlphabeticSort, DepthFirstSort)
+                    xform <- List(Format, AlphabeticSort, DepthFirstSort, StandardTopDownForm, StandardBottomUpForm)
                 ) {
                     val action = new Action(xform.displayName) {
                         def apply = {

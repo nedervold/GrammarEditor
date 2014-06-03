@@ -40,6 +40,34 @@ sealed case class Production(val lhs: Nonterminal,
      */
     def isDefined = rhs.nonEmpty
 
+    def isInStandardForm: Boolean = {
+        def isSeqElmt(t: Term): Boolean = {
+            t match {
+                case Nonterminal(_) => true
+                case Terminal(_) => true
+                case _ => false
+            }
+        }
+        def isSeq(t: Term): Boolean = {
+            t match {
+                case Epsilon => true
+                case Sequenced(s, ss) => isSeqElmt(s) && isSeq(ss)
+                case _ => isSeqElmt(t)
+            }
+        }
+        def isAltsOfSeqs(t: Term): Boolean = {
+            t match {
+                case Fail => true
+                case Or(s, ss) => isSeq(s) && isAltsOfSeqs(ss)
+                case _ => isSeq(t)
+            }
+        }
+        rhs match {
+            case None => false
+            case Some(rhs) => isAltsOfSeqs(rhs)
+        }
+    }
+
     override def toString = {
         val rhsStr = rhs match {
             case Some(rhs) => " ::= " + rhs.toString

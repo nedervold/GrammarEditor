@@ -38,12 +38,23 @@ trait TermPrinting {
  * @constructor
  * @param name the name of the nonterminal
  */
-sealed case class Nonterminal(val name: String) extends Term with Ordered[Nonterminal] {
+case class Nonterminal(val name: String) extends Term with Ordered[Nonterminal] {
     require(name != null)
     def foreach[U](f: Term => U): Unit = { f(this) }
     def toStringPrec(prec: Int) = name
     def compare(that: Nonterminal) = this.name.compare(that.name)
 }
+
+/**
+ * A synthesized nonterminal in this grammar
+ * @author nedervold
+ * @constructor
+ * @param tag the tag for this nonterminal
+ * @param num a serial number for this nonterminal
+ * @param sourceTerm the term this nonterminal is synthesized from
+ */
+class SyntheticNonterminal(val tag: String, val num: Int, val sourceTerm: Term)
+    extends Nonterminal("synth_" + tag + "_" + num) {}
 
 /**
  * A terminal in this grammar

@@ -20,6 +20,10 @@ sealed case class Grammar(val productions: Seq[Production]) extends Syntax {
      */
     def isDefined = productions.forall(_.isDefined);
 
+    def isInStandardForm: Boolean = {
+        productions.forall(_.isInStandardForm)
+    }
+
     /**
      * Treats a [[Grammar]] as a map from [[Production]] heads to [[Production]]s.
      *
