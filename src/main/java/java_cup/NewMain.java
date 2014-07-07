@@ -30,7 +30,6 @@ import static java_cup.Main.start_time;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.StringBufferInputStream;
@@ -51,7 +50,7 @@ public class NewMain {
 	private static String summary;
 
 	/**
-	 * Overridden from Main because of the hardcoding of the output stream.
+	 * Overridden from Main to remove the hardcoding of the output stream.
 	 * 
 	 * @param output_produced
 	 */
@@ -137,7 +136,8 @@ public class NewMain {
 	}
 
 	/**
-	 * Overridden from Main because Lexer assumes input comes from System.in.
+	 * Overridden from Main to remove Lexer's assumption that input comes from
+	 * System.in.
 	 * 
 	 * @throws java.lang.Exception
 	 */
@@ -147,14 +147,18 @@ public class NewMain {
 
 		/* create a parser and parse with it */
 		final ComplexSymbolFactory csf = new ComplexSymbolFactory();
-		final Lexer lexer = new Lexer(input) {
-			@Override
-			public Symbol next_token() throws IOException {
-				printErrLn("in next_token()");
-				return super.next_token();
-			}
-		};
+
+		/*
+		 * The class Lexer's constructor Lexer(ComplexSymbolFactory) hardcodes
+		 * the input stream, so we have to jump through some hoops here.
+		 */
+		final Lexer lexer = new Lexer(input);
 		setSymbolFactoryFieldOfLexer(lexer, csf);
+
+		/*
+		 * The class parser is subtyped to provide tracing, needed because
+		 * scan() is acting weird. See note below.
+		 */
 		final parser parser_obj = new parser(lexer, csf) {
 			@Override
 			protected void init_actions() {
@@ -216,6 +220,13 @@ public class NewMain {
 		return 0;
 	}
 
+	/**
+	 * Runs the Java CUP engine on the input, returning some output.
+	 * 
+	 * @param input
+	 * @return output
+	 * @throws Exception
+	 */
 	static public synchronized String run(final String input) throws Exception {
 		printErrLn("in NewMain.run");
 		runMain(new StringBufferInputStream(input));
