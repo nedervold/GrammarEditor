@@ -8,7 +8,17 @@ object JavaCupAnalyzer extends Lalr1Analyzer {
 }
 
 class JavaCupAnalysis(val grammar: Grammar) extends Lalr1Analysis {
-    val message = NewMain.run(JavaCupSpec.grammarToSpec(grammar))
+    val spec = JavaCupSpec.grammarToSpec(grammar)
+    val message = {
+        try {
+            NewMain.run(spec)
+        } catch {
+            case e: Exception => e.getMessage()
+        }
+    }
     def reduceReduceCount: Int = NewMain.reduceReduceCount
     def shiftReduceCount: Int = NewMain.shiftReduceCount
+    override def toString: String = {
+        (if (isLalr1) "Yay!  It's LALR(1)!" else message) + "\n----\n" + spec
+    }
 }
