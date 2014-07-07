@@ -45,6 +45,7 @@ import org.nedervold.grammareditor.models.PolledModel
 import org.nedervold.grammareditor.grammar.transformations.StandardBottomUpForm
 import org.nedervold.grammareditor.grammar.transformations.StandardTopDownForm
 import org.nedervold.grammareditor.grammar.transformations.StandardBottomUpForm
+import java_cup.JavaCupAnalyzer
 
 object Main extends SimpleSwingApplication {
     System.setProperty("apple.laf.useScreenMenuBar", "true")
@@ -92,6 +93,12 @@ object Main extends SimpleSwingApplication {
         gram.map(displayTerminals).getOrElse("")
     }
 
+    def lalr1Display(gram: Try[Grammar]): String = {
+        def topDown(g: Grammar): String = {
+            JavaCupAnalyzer.analyze(StandardTopDownForm(g)).toString
+        }
+        gram.map(topDown).getOrElse("")
+    }
     /**
      * Models a string describing the nonterminals.  This function is temporary scaffolding.
      *
@@ -105,6 +112,14 @@ object Main extends SimpleSwingApplication {
      * @return a string describing the terminals
      */
     val terminalsModel: Model[String] = new FmapModel(terminalsDisplay, grammar)
+
+    /**
+     * Models a string describing the LALR(1) analysis of the grammar.  This function is
+     * temporary scaffolding.
+     *
+     * @return a string describing the LALR(1) analysis
+     */
+    val lalr1Model: Model[String] = new FmapModel(lalr1Display, grammar)
 
     /**
      * Parses the grammar and if it's unsuccessful, displays the error message
@@ -275,6 +290,12 @@ object Main extends SimpleSwingApplication {
                     border = Swing.TitledBorder(Swing.LineBorder(Color.BLACK), "Nonterminals")
                 }
                 contents += nonterminalsView
+
+                val lalr1View = new TextAreaView(lalr1Model) {
+                    lineWrap = true; wordWrap = true
+                    border = Swing.TitledBorder(Swing.LineBorder(Color.BLACK), "LALR(1) Analysis")
+                }
+                contents += lalr1View
             }
         }
 
