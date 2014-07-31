@@ -72,13 +72,32 @@ object Main extends SimpleSwingApplication {
     val titleModel = new Fmap2Model(mkTitle, documentPath, dirty)
 
     /**
+     * Parses the grammar and if it's successful, displays the productions' info
+     *
+     * @param source the source of the grammar
+     * @return display of the productions
+     */
+    def productionsDisplay(gram: Try[Grammar]): String = {
+        def displayProductions(g: Grammar): String = {
+            val prods = g.productions
+            val undefs = g.productions.count(!_.isDefined)
+            prods.size + " productions (" + undefs + " undefined)"
+        }
+        gram.map(displayProductions).getOrElse("")
+    }
+
+    /**
      * Parses the grammar and if it's successful, displays the nonterminals
      *
      * @param source the source of the grammar
      * @return display of the nonterminals
      */
     def nonterminalsDisplay(gram: Try[Grammar]): String = {
-        def displayNonterminals(g: Grammar): String = g.nonterminals.mkString(", ")
+        def displayNonterminals(g: Grammar): String = {
+            val nondefs = g.undefinedNonterminals
+            val nts = g.nonterminals
+            nts.size + " nonterminals (" + nondefs.size + " undefined):\n" + nts.mkString(", ")
+        }
         gram.map(displayNonterminals).getOrElse("")
     }
 
@@ -89,7 +108,11 @@ object Main extends SimpleSwingApplication {
      * @return display of the terminals
      */
     def terminalsDisplay(gram: Try[Grammar]): String = {
-        def displayTerminals(g: Grammar): String = g.terminals.mkString(", ")
+        def displayTerminals(g: Grammar): String = {
+            val ts = g.terminals
+            val lits = ts.filter(_.name.charAt(0) == '"')
+            ts.size + " terminals (" + lits.size + " literals; " + (ts.size - lits.size) + " free-format):\n" + ts.mkString(", ")
+        }
         gram.map(displayTerminals).getOrElse("")
     }
 
@@ -99,6 +122,13 @@ object Main extends SimpleSwingApplication {
         }
         gram.map(topDown).getOrElse("")
     }
+    /**
+     * Models a string describing the nonterminals.  This function is temporary scaffolding.
+     *
+     * @return a string describing the nonterminals
+     */
+    val productionsModel: Model[String] = new FmapModel(productionsDisplay, grammar)
+
     /**
      * Models a string describing the nonterminals.  This function is temporary scaffolding.
      *
@@ -279,6 +309,12 @@ object Main extends SimpleSwingApplication {
 
         val infoPanel = new ScrollPane {
             contents = new BoxPanel(Orientation.Vertical) {
+                val productionsView = new TextAreaView(productionsModel) {
+                    lineWrap = true; wordWrap = true
+                    border = Swing.TitledBorder(Swing.LineBorder(Color.BLACK), "Productions")
+                }
+                contents += productionsView
+
                 val terminalsView = new TextAreaView(terminalsModel) {
                     lineWrap = true; wordWrap = true
                     border = Swing.TitledBorder(Swing.LineBorder(Color.BLACK), "Terminals")
