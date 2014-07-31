@@ -20,7 +20,7 @@ import scala.swing.Swing
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
-import org.nedervold.grammareditor.grammar.Grammar
+import org.nedervold.grammareditor.grammar._
 import org.nedervold.grammareditor.grammar.GrammarParser
 import org.nedervold.grammareditor.grammar.transformations.AlphabeticSort
 import org.nedervold.grammareditor.grammar.transformations.DepthFirstSort
@@ -95,7 +95,14 @@ object Main extends SimpleSwingApplication {
     def nonterminalsDisplay(gram: Try[Grammar]): String = {
         def displayNonterminals(g: Grammar): String = {
             val nondefs = g.undefinedNonterminals
-            val nts = g.nonterminals
+            def toStr(nt: Nonterminal): String = {
+                if (nondefs.contains(nt)) {
+                    nt.toString + "*"
+                } else {
+                    nt.toString
+                }
+            }
+            val nts = g.nonterminals.map(toStr)
             nts.size + " nonterminals (" + nondefs.size + " undefined):\n" + nts.mkString(", ")
         }
         gram.map(displayNonterminals).getOrElse("")
