@@ -1,6 +1,7 @@
 package org.nedervold.grammareditor.grammar
 
 import scala.util.parsing.combinator.RegexParsers
+import scala.util.parsing.input.Position
 import scala.util.Try
 import scala.util.Success
 import scala.util.Failure
@@ -17,7 +18,11 @@ object GrammarParser {
     def parseGrammar(input: String): Try[Grammar] = {
         Impl.parseAll(Impl.grammar, input) match {
             case Impl.Success(g, _) => Success(g)
-            case Impl.NoSuccess(msg, _) => Failure(new Exception(msg))
+            case Impl.NoSuccess(msg, next) => {
+                val pos: Position = next.pos
+                val msg2 = msg + " on line " + pos.line
+                Failure(new Exception(msg2))
+            }
         }
     }
 

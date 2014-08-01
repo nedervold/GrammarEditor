@@ -1,13 +1,18 @@
 package org.nedervold.grammareditor
 
 import java.awt.Color
+import java.io.File
+import java.io.PrintWriter
 import java.util.concurrent.TimeUnit
+
+import scala.io.Source
 import scala.swing.Action
 import scala.swing.BorderPanel
 import scala.swing.BorderPanel.Position.Center
 import scala.swing.BorderPanel.Position.South
 import scala.swing.BoxPanel
 import scala.swing.Dimension
+import scala.swing.FileChooser
 import scala.swing.MainFrame
 import scala.swing.Menu
 import scala.swing.MenuBar
@@ -20,32 +25,30 @@ import scala.swing.Swing
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
-import org.nedervold.grammareditor.grammar._
+
+import org.nedervold.grammareditor.grammar.Grammar
 import org.nedervold.grammareditor.grammar.GrammarParser
+import org.nedervold.grammareditor.grammar.Nonterminal
 import org.nedervold.grammareditor.grammar.transformations.AlphabeticSort
+import org.nedervold.grammareditor.grammar.transformations.CstToAst
 import org.nedervold.grammareditor.grammar.transformations.DepthFirstSort
 import org.nedervold.grammareditor.grammar.transformations.Format
+import org.nedervold.grammareditor.grammar.transformations.StandardBottomUpForm
+import org.nedervold.grammareditor.grammar.transformations.StandardTopDownForm
+import org.nedervold.grammareditor.grammar.transformations.mkAccelerator
 import org.nedervold.grammareditor.models.DebouncingModel
+import org.nedervold.grammareditor.models.Fmap2Model
 import org.nedervold.grammareditor.models.FmapModel
 import org.nedervold.grammareditor.models.Model
 import org.nedervold.grammareditor.models.ModelChangedEvent
+import org.nedervold.grammareditor.models.VarModel
 import org.nedervold.grammareditor.models.adapters.DocumentAdapter
 import org.nedervold.grammareditor.models.viewcontrollers.DocumentViewController
 import org.nedervold.grammareditor.models.views.TextAreaView
-import org.nedervold.grammareditor.grammar.transformations.GrammarTransformation
-import scala.swing.FileChooser
-import javax.swing.filechooser.FileNameExtensionFilter
-import java.io.PrintWriter
-import scala.io.Source
-import java.io.File
-import org.nedervold.grammareditor.models.VarModel
-import org.nedervold.grammareditor.models.Fmap2Model
-import javax.swing.undo.UndoManager
-import org.nedervold.grammareditor.models.PolledModel
-import org.nedervold.grammareditor.grammar.transformations.StandardBottomUpForm
-import org.nedervold.grammareditor.grammar.transformations.StandardTopDownForm
-import org.nedervold.grammareditor.grammar.transformations.StandardBottomUpForm
+
 import java_cup.JavaCupAnalyzer
+import javax.swing.filechooser.FileNameExtensionFilter
+import javax.swing.undo.UndoManager
 
 object Main extends SimpleSwingApplication {
     System.setProperty("apple.laf.useScreenMenuBar", "true")
@@ -288,7 +291,7 @@ object Main extends SimpleSwingApplication {
                 contents += new MenuItem(undoAction)
                 contents += new MenuItem(redoAction)
                 for (
-                    xform <- List(Format, AlphabeticSort, DepthFirstSort, StandardTopDownForm, StandardBottomUpForm)
+                    xform <- List(Format, AlphabeticSort, DepthFirstSort, StandardTopDownForm, StandardBottomUpForm, CstToAst)
                 ) {
                     val action = new Action(xform.displayName) {
                         def apply = {
